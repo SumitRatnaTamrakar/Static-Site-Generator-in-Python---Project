@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_constructor(self):
@@ -37,3 +37,30 @@ class TestHTMLNode(unittest.TestCase):
     def test_repr_no_children(self):
         node = HTMLNode("p", "This is a paragraph", props={"id": "para1", "class": "text-1"})
         self.assertEqual(repr(node), "HTMLNode(tag=p, value=This is a paragraph, children=None, props={'id': 'para1', 'class': 'text-1'})")
+
+# --------------------------------------------------------------------------
+# Tests for LeafNode class
+# --------------------------------------------------------------------------
+
+class TestLeafNode(unittest.TestCase):
+    def test_to_html_with_basic_tag_and_value(self):
+        node = LeafNode("p", "This is a paragraph")
+        self.assertEqual(node.to_html(), "<p>This is a paragraph</p>")
+
+    def test_to_html_with_tag_with_attributes(self):
+        node = LeafNode("a", "This is a link", props={"href": "https://www.google.com", "target": "_blank"})
+        self.assertEqual(node.to_html(), '<a href="https://www.google.com" target="_blank">This is a link</a>')
+    
+    def test_to_html_with_raw_text_no_tag(self):
+        node = LeafNode(None, "This is raw text")
+        self.assertEqual(node.to_html(), "This is raw text")
+
+    def test_to_html_with_no_value_raises_value_error(self):
+        node = LeafNode("p", None)
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_repr(self):
+        node = LeafNode("img", "image.png", props={"alt": "An image", "width": "100"})
+        self.assertEqual(repr(node), "LeafNode(tag=img, value=image.png, props={'alt': 'An image', 'width': '100'})")
+
