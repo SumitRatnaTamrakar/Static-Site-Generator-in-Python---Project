@@ -103,51 +103,55 @@ def test_to_html_with_children_2(self):
         "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>"
     )
 
-def test_to_html_with_no_tag_raises_value_error(self):
-    child_node = LeafNode("span", "child")
-    parent_node = ParentNode(None, [child_node])
-    with self.assertRaises(ValueError):
-        parent_node.to_html()\
+class TestParentNode(unittest.TestCase):
+    def test_to_html_with_no_tag_raises_value_error(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode(None, [child_node])
+        with self.assertRaises(ValueError):
+            parent_node.to_html()
         
-def test_to_html_with_no_tag_raises_value_error_2(self):
-    child_node = LeafNode("span", "child")
-    parent_node = ParentNode("", [child_node])
-    with self.assertRaises(ValueError):
-        parent_node.to_html()
+    def test_to_html_with_no_tag_raises_value_error_2(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("", [child_node])
+        with self.assertRaises(ValueError):
+            parent_node.to_html()
 
-def test_to_html_with_no_children_raises_value_error(self):
-    parent_node = ParentNode("div", [])
-    with self.assertRaises(ValueError):
-        parent_node.to_html()
+    def test_to_html_with_no_children_raises_value_error(self):
+        parent_node = ParentNode("div", [])
+        with self.assertRaises(ValueError):
+            parent_node.to_html()
 
-def test_to_html_with_no_children_raises_value_error_2(self):
-    parent_node = ParentNode("div", None)
-    with self.assertRaises(ValueError):
-        parent_node.to_html()
+    def test_to_html_with_no_children_raises_value_error_2(self):
+        parent_node = ParentNode("div", None)
+        with self.assertRaises(ValueError):
+            parent_node.to_html()
 
-def test_to_html_with_attributes(self):
-    child_node = LeafNode("span", "child")
-    parent_node = ParentNode("div", [child_node], props={"class": "container", "id": "main"})
-    self.assertEqual(
-        parent_node.to_html(),
-        '<div class="container" id="main"><span>child</span></div>'
-    )
+    def test_to_html_with_attributes(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node], props={"class": "container", "id": "main"})
+        self.assertEqual(
+            parent_node.to_html(),
+            '<div class="container" id="main"><span>child</span></div>'
+        )
 
-def test_to_html_with_multiple_children(self):
-    child_1 = LeafNode("h1", "Title")
-    child_2 = LeafNode("p", "This is a paragraph.")
-    parent_node = ParentNode("div", [child_1, child_2])
-    self.assertEqual(
-        parent_node.to_html(),
-        "<div><h1>Title</h1><p>This is a paragraph.</p></div>"
-    )
+    def test_to_html_with_multiple_children(self):
+        child_1 = LeafNode("h1", "Title")
+        child_2 = LeafNode("p", "This is a paragraph.")
+        parent_node = ParentNode("div", [child_1, child_2])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><h1>Title</h1><p>This is a paragraph.</p></div>"
+        )
 
-def test_html_with_great_grandchildren(self):
-    great_grandchild = LeafNode("i", "great-grandchild")
-    grandchild = ParentNode("b", [great_grandchild])
-    child = ParentNode("span", [grandchild])
-    parent = ParentNode("div", [child])
-    self.assertEqual(
-        parent.to_html(),
-        "<div><span><b><i>great-grandchild</i></b></span></div>"
-    )
+    def test_html_with_great_grandchildren(self):
+        great_grandchild = LeafNode("i", "great-grandchild")
+        grandchild = ParentNode("b", [great_grandchild])
+        child = ParentNode("span", [grandchild])
+        parent = ParentNode("div", [child])
+        self.assertEqual(
+            parent.to_html(),
+            "<div><span><b><i>great-grandchild</i></b></span></div>"
+        )
+
+if __name__ == "__main__":
+    unittest.main()

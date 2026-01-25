@@ -27,6 +27,8 @@ class LeafNode(HTMLNode):
             raise ValueError("LeafNode must have a value")
         elif not self.tag:
             return self.value
+        elif self.tag in ["img", "br", "hr", "input", "meta", "link"]:
+            return f"<{self.tag}{props_html}/>"
         else:
             return f"<{self.tag}{props_html}>{self.value}</{self.tag}>"
     
