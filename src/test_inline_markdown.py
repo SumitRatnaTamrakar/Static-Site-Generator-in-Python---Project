@@ -3,7 +3,9 @@ from inline_markdown import (
     extract_markdown_links,
     extract_markdown_images,
     split_nodes_image,
-    split_nodes_link
+    split_nodes_link,
+    text_to_textnodes,
+    split_nodes_delimiter,
     )
 
 from textnode import TextNode, TextType
@@ -351,5 +353,111 @@ class TestInlineMarkdown(unittest.TestCase):
             new_nodes,
         )
 
-    
-    
+    # --------------------------------------------------------------------------
+    # Tests for text_to_textnodes function
+    # --------------------------------------------------------------------------
+
+
+    def test_text_to_textnodes(self):
+        nodes = text_to_textnodes(
+            "This is **text** with an _italic_ word and a `code block` and an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://boot.dev)"
+        )
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ],
+            nodes,
+        )
+
+    def test_text_to_textnode_plain_text_only(self):
+        nodes = text_to_textnodes(
+            "hello world"
+        )
+        self.assertListEqual(
+            [
+                TextNode("hello world", TextType.TEXT)
+            ],
+            nodes,
+        )
+
+    def test_text_to_textnode_single_bold_segment(self):
+        nodes = text_to_textnodes(
+            "this is **bold** text"
+        )
+        self.assertListEqual(
+            [
+                TextNode("this is ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD),
+                TextNode(" text", TextType.TEXT),
+            ],
+            nodes
+        )
+
+    def test_text_to_textnode_mixed_bold_italic_code(self):
+        nodes = text_to_textnodes(
+            "**b** _i_ `c`"
+        )
+
+        # nodes = text_to_textnodes("**b** _i_ `c`")
+        # print(f"Actual: {nodes}")
+        # print(f"Expected: {[TextNode('b', TextType.BOLD), TextNode(' ', TextType.TEXT), TextNode('i', TextType.ITALIC), TextNode(' ', TextType.TEXT), TextNode('c', TextType.CODE)]}")
+        # self.assertListEqual(...)
+
+        self.assertListEqual(
+            [
+                TextNode("b", TextType.BOLD),
+                TextNode(" ", TextType.TEXT),
+                TextNode("i", TextType.ITALIC),
+                TextNode(" ", TextType.TEXT),
+                TextNode("c", TextType.CODE),
+            ], nodes
+        )
+
+
+    def test_text_to_textnode_link_only(self):
+        nodes = text_to_textnodes(
+            "[bootdev](https://boot.dev)"
+        )
+        self.assertListEqual(
+            [
+                TextNode("bootdev", TextType.LINK, "https://boot.dev")
+            ], nodes
+        )
+
+    def test_text_to_textnode_image_only(self):
+        nodes = text_to_textnodes(
+            "![obi](https://img.test/obi.jpg)"
+        )
+        self.assertListEqual(
+            [
+                TextNode("obi", TextType.IMAGE, "https://img.test/obi.jpg")
+            ], nodes
+        )
+
+    def test_text_to_textnode_full_mixed_example_from_assignment(self):
+        nodes = text_to_textnodes(
+            "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        )
+        self.assertListEqual(
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ], nodes
+        )
