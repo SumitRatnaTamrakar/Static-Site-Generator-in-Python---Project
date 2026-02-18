@@ -1,11 +1,14 @@
 from textnode import TextNode, TextType
 import os, shutil
+from gencontent import generate_page
 
 def main():
     # print("hello world")
-    TextNode_obj = TextNode("This is some anchor text", TextType.LINK, "https://www.boot.dev")
-    print(TextNode_obj)
+    # TextNode_obj = TextNode("This is some anchor text", TextType.LINK, "https://www.boot.dev")
+    # print(TextNode_obj)
+
     copy_static()
+    generate_page("content/index.md", "template.html", "public/index.html")
 
 def clean_public_directory(public_directory_path):
     if os.path.exists(public_directory_path):
