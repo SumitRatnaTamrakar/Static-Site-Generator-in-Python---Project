@@ -1,6 +1,7 @@
 from textnode import TextNode, TextType
 import os, shutil
 from gencontent import generate_page, generate_pages_recursive
+import sys
 
 def main():
     base_dir = os.path.dirname(os.path.dirname(__file__))
@@ -8,8 +9,11 @@ def main():
     content_dir = os.path.join(base_dir, "content")
     template_path = os.path.join(base_dir, "template.html")
     static_dir = os.path.join(base_dir, "static")
-    public_dir = os.path.join(base_dir, "public")
+    public_dir = os.path.join(base_dir, "docs")
 
+    basepath = "/"
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
 
     # print("hello world")
     # TextNode_obj = TextNode("This is some anchor text", TextType.LINK, "https://www.boot.dev")
@@ -19,7 +23,7 @@ def main():
 
     # generate_page("content/index.md", "template.html", "public/index.html")
     
-    generate_pages_recursive(content_dir, template_path, public_dir)
+    generate_pages_recursive(content_dir, template_path, public_dir, basepath)
 
 def clean_public_directory(public_directory_path):
     if os.path.exists(public_directory_path):
