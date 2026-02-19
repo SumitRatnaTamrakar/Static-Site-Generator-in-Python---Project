@@ -1,6 +1,6 @@
 from textnode import TextNode, TextType
 import os, shutil
-from gencontent import generate_page
+from gencontent import generate_page, generate_pages_recursive
 
 def main():
     # print("hello world")
@@ -8,7 +8,10 @@ def main():
     # print(TextNode_obj)
 
     copy_static()
-    generate_page("content/index.md", "template.html", "public/index.html")
+
+    # generate_page("content/index.md", "template.html", "public/index.html")
+    
+    generate_pages_recursive("content", "template.html", "public")
 
 def clean_public_directory(public_directory_path):
     if os.path.exists(public_directory_path):
@@ -48,4 +51,5 @@ def copy_static():
     recursive_copy("static", "public")
 """
 
-main()
+if __name__ == "__main__":
+    main()
