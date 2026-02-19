@@ -3,15 +3,23 @@ import os, shutil
 from gencontent import generate_page, generate_pages_recursive
 
 def main():
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    
+    content_dir = os.path.join(base_dir, "content")
+    template_path = os.path.join(base_dir, "template.html")
+    static_dir = os.path.join(base_dir, "static")
+    public_dir = os.path.join(base_dir, "public")
+
+
     # print("hello world")
     # TextNode_obj = TextNode("This is some anchor text", TextType.LINK, "https://www.boot.dev")
     # print(TextNode_obj)
 
-    copy_static()
+    copy_static(static_dir, public_dir)
 
     # generate_page("content/index.md", "template.html", "public/index.html")
     
-    generate_pages_recursive("content", "template.html", "public")
+    generate_pages_recursive(content_dir, template_path, public_dir)
 
 def clean_public_directory(public_directory_path):
     if os.path.exists(public_directory_path):
@@ -37,10 +45,8 @@ def recursive_copy(source_path, destination_path):
                 os.mkdir(full_destination_path)
             recursive_copy(full_source_path, full_destination_path)
 
-def copy_static():
-    base_dir = os.path.dirname(os.path.dirname(__file__))
-    public_dir = os.path.join(base_dir, "public")
-    static_dir = os.path.join(base_dir, "static")  # Add this
+def copy_static(static_dir, public_dir):
+
     clean_public_directory(public_dir)
     recursive_copy(static_dir, public_dir)
 
